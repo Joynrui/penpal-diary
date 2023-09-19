@@ -12,7 +12,7 @@
 4. CORS做项目的跨域资源共享策略
 5. 项目产生的一切request 都由Axios提供的Ajax请求构成
 6. 前后端数据交互格式为json
-7. icon gallery 为 Fontawesome6
+7. icon gallery 为 Fontawesome4
 8. 页面切换使用 Vue Router
 9. 状态管理使用 Vuex
 10. front-end test 使用 MockJS
@@ -42,7 +42,7 @@ mock                   // 项目mock 模拟数据
 router                 // 路由
 store                  // 全局 store管理
 styles                 // 全局样式
-utils                  // 全局公用方法
+utils                  // 全局公用方法，工具
 vendor                 // 公用vendor
 views                   // view
 

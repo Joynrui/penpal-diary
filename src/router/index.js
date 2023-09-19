@@ -22,6 +22,10 @@ const routes = [
     { path: "/", redirect: "/start" },
     // 添加 /start 路由
     { path: "/start", component: Start },
+    {
+        path: "/login",
+        component: () => import("../views/login/Login")
+    }
 ]
 
 const router = new VueRouter({

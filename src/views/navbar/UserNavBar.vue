@@ -2,9 +2,9 @@
   <div class="header-container">
     <div class="l-content">
       <el-menu class="el-menu-demo clarity" mode="horizontal" :router="true">
-        <el-menu-item>
+        <!-- <el-menu-item>
           <img class="logo" src="@/assets/logo.png" alt="logo" />
-        </el-menu-item>
+        </el-menu-item> -->
         <!-- no children item -->
         <el-menu-item
           v-for="item in noChildren"

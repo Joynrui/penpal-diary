@@ -1,17 +1,16 @@
 <template>
   <div class="header-container">
     <div class="l-content">
-      <el-menu class="el-menu-demo clarity" mode="horizontal" :router="true"
-      >
+      <el-menu class="el-menu-demo clarity" mode="horizontal" :router="true">
         <!-- no children item -->
         <el-menu-item
           v-for="item in noChildren"
           :key="item.name"
           :index="item.path"
-          
         >
           <span slot="title">{{ item.label }}</span>
         </el-menu-item>
+
         <!-- has children item -->
         <el-submenu
           v-for="item in hasChildren"
@@ -32,16 +31,10 @@
         </el-submenu>
       </el-menu>
     </div>
+    
     <div class="r-content">
-      <!-- <el-dropdown>
-        <span class="el-dropdown-link">
-          <img class="user-head"  src="@/assets/headpicture_saber.jpg" alt="myImage">
-        </span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>个人中心</el-dropdown-item>
-          <el-dropdown-item>退出登录</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown> -->
+      <el-button round>{{buttonData_1}}</el-button>
+      <el-button  type="primary" round>{{buttonData_2}}</el-button>
     </div>
   </div>
 </template>
@@ -52,18 +45,14 @@ export default {
     return {
       menuData: [
         {
-          path: "/diary",
-          name: "diary",
-          label: "日记",
-          url: "User/Diary",
-        },
-        {
-          path: "/match",
-          name: "match",
-          label: "匹配",
-          url: "User/Match",
+          path: "/start",
+          name: "start",
+          label: "首页",
+          url: "start",
         },
       ],
+      buttonData_1: "登录",
+      buttonData_2: "注册",
     };
   },
   methods: {
@@ -89,20 +78,24 @@ export default {
 
 <style lang="less" scoped>
 .header-container {
-  background: linear-gradient(to right, rgb(255, 238, 240), rgb(229, 217, 255));
+  border-bottom: 1px solid #e6e6e6;
   height: 60px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0;
+
   .clarity {
     background-color: rgba(0, 0, 0, 0);
   }
   .r-content {
-    .user-head {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    .el-button {
+      margin-right: 10px;
     }
   }
 }
+
 </style>
