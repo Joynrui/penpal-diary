@@ -37,11 +37,12 @@ export default {
   data() {
     return {
       buttonData: {
-        path: "/Main",
+        path: "/main",
         name: "main",
         label: "用户首页",
-        url: "Main",
+        url: "main",
       },
+      startButtonDate:{}
     };
   },
   components: {

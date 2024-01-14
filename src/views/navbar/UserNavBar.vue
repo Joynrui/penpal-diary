@@ -123,6 +123,9 @@ export default {
       height: 50px;
       border-radius: 50%;
     }
+    .el-dropdown {
+      margin-right: 20px;
+    }
   }
 }
 </style>

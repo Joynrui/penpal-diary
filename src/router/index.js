@@ -9,7 +9,7 @@ Vue.use(VueRouter)
 
 const routes = [
     {
-        path: "/Main",
+        path: "/main",
         component: MainUserLayout,
         redirect: "/diary",
         children: [

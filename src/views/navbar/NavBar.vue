@@ -33,7 +33,7 @@
     </div>
     
     <div class="r-content">
-      <el-button round>{{buttonData_1}}</el-button>
+      <el-button round @click="redirectToLogin">{{buttonData_1}}</el-button>
       <el-button  type="primary" round>{{buttonData_2}}</el-button>
     </div>
   </div>
@@ -61,6 +61,10 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
+    },
+
+    redirectToLogin() {
+      this.$router.push("/login");
     },
   },
   computed: {
