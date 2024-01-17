@@ -34,7 +34,7 @@
     
     <div class="r-content">
       <el-button round @click="redirectToLogin">{{buttonData_1}}</el-button>
-      <el-button  type="primary" round>{{buttonData_2}}</el-button>
+      <el-button  type="primary" round @click="redirectToRegister">{{buttonData_2}}</el-button>
     </div>
   </div>
 </template>
@@ -65,6 +65,9 @@ export default {
 
     redirectToLogin() {
       this.$router.push("/login");
+    },
+    redirectToRegister() {
+      this.$router.push("/register");
     },
   },
   computed: {

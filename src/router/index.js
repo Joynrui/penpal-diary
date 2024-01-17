@@ -25,6 +25,11 @@ const routes = [
     {
         path: "/login",
         component: () => import("../views/login/Login")
+    },
+    // 添加 /register 路由
+    {
+        path: "/register",
+        component: () => import("../views/register/Register")
     }
 ]
 

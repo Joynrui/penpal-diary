@@ -9,12 +9,10 @@
       <el-radio-group v-model="form.loginUserType" size="mini">
         <!-- click在此处无效，必须使用click.native -->
         <el-radio-button
-          label="用户"
-          @click.native="setloginUserTypeAsUser"
+          label="user"
         ></el-radio-button>
         <el-radio-button
-          label="管理员"
-          @click.native="setloginUserTypeAsAdmin"
+          label="admin"
         ></el-radio-button>
       </el-radio-group>
 
@@ -104,14 +102,6 @@ export default {
         // Handle any errors that occur during the request
         console.error(error);
       }
-    },
-    setloginUserTypeAsUser() {
-      // Set the user type to "0" 设置用户类型为"0",normal user
-      this.loginUserType = "0";
-    },
-    setloginUserTypeAsAdmin() {
-      // Set the user type to "1" 设置用户类型为"1",admin user
-      this.loginUserType = "1";
     },
   },
 };
