@@ -8,12 +8,8 @@
     <el-form v-model="form" :rules="rules">
       <el-radio-group v-model="form.loginUserType" size="mini">
         <!-- click在此处无效，必须使用click.native -->
-        <el-radio-button
-          label="user"
-        ></el-radio-button>
-        <el-radio-button
-          label="admin"
-        ></el-radio-button>
+        <el-radio-button label="user"></el-radio-button>
+        <el-radio-button label="admin"></el-radio-button>
       </el-radio-group>
 
       <el-form-item label="用户名" prop="loginUserName">
@@ -36,7 +32,9 @@
       </el-form-item>
 
       <el-form-item class="register">
-        <el-button type="text">没有账号？ 创建一个！</el-button>
+        <el-button type="text" @click="pushToRegister"
+          >没有账号？ 创建一个！</el-button
+        >
       </el-form-item>
     </el-form>
   </div>
@@ -44,6 +42,8 @@
 
 <script>
 import Cookie from "js-cookie";
+import axios from "axios";
+import {AxiosResponse} from "axios";
 export default {
   data() {
     return {
@@ -80,28 +80,29 @@ export default {
      * 阻塞整个应用。
      */
     async login() {
-      try {
-        // Combine loginUserType and form data into a single object 将用户类型和表单数据合并为一个对象
-        const requestBody = {
-          loginUserType: this.loginUserType,
-          loginUserName: this.form.loginUserName,
-          loginUserPassword: this.form.loginUserPassword,
-        };
-
-        // Send a POST request to the backend API 向后端发送登录请求
-        const response = await this.$http.post("/api/login", requestBody);
-        console.log(requestBody);
-        // Extract the token from the response 提取响应中的令牌
-        const token = response.data.data.token;
-        // Extract the token from the response and store it in a cookie
-        Cookie.set("token", token);
-        console.log(token);
-
-
-      } catch (error) {
-        // Handle any errors that occur during the request
-        console.error(error);
+      // 将用户类型和表单数据合并为一个对象
+      let requestBody = {
+        loginUserType: this.form.loginUserType,
+        loginUserName: this.form.loginUserName,
+        loginUserPassword: this.form.loginUserPassword,
+      };
+      let res = await axios.post("/api/login",requestBody);
+      // 获取S端token
+      let localToken = res.data.data.token;
+      // 获取服务响应状态
+      let localStatus = res.data.status;
+      if (localStatus === false) {
+        // 登录失败，提示用户
+        return this.$message.error("登录失败，请检查用户名和密码");
+      } else {
+        Cookie.set("token", localToken);
+        this.$message.success("登录成功");
+        await this.$router.push("/main");
       }
+    },
+
+    pushToRegister() {
+      this.$router.push("/register");
     },
   },
 };

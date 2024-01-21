@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
-import Cookies from 'js-cookie';
+import {checkToken} from './components/GlobalToken.js'
 import axios from 'axios'
 Vue.config.productionTip = false
 Vue.use(ElementUI)
@@ -12,15 +12,8 @@ Vue.use(ElementUI)
 axios.defaults.baseURL = 'http://localhost:8081';
 // Set axios to a global  custom attribute, every componentscan access directly inside.
 Vue.prototype.$http = axios;
-
-// global befored导航守卫
-router.beforeEach((to, from, next) => {
-  const token = Cookies.get('token')
-  if (token && to.path === '/login') {
-    next({ path: '/' })
-  } else
-    next()
-})
+// 检查token
+checkToken();
 new Vue({
   router,
   render: h => h(App),

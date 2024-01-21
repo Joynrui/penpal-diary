@@ -107,8 +107,7 @@ export default {
           return this.$message.error("密码不一致");
         } else {
           // 发送注册请求
-          const response = await this.$http.post("/api/register", requestBody);
-          console.log(response);
+          let res = await this.$http.post("/api/register", requestBody);
           console.log(requestBody);
           //   // 注册成功，获取返回的token
           //   const token = response.data.data.token;
