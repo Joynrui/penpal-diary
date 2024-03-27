@@ -43,7 +43,7 @@
 <script>
 import Cookie from "js-cookie";
 import axios from "axios";
-import {AxiosResponse} from "axios";
+import { AxiosResponse } from "axios";
 export default {
   data() {
     return {
@@ -86,9 +86,14 @@ export default {
         loginUserName: this.form.loginUserName,
         loginUserPassword: this.form.loginUserPassword,
       };
-      let res = await axios.post("/api/login",requestBody);
+      let res = await axios.post("/api/login", requestBody);
       // 获取S端token
       let localToken = res.data.data.token;
+      // 获取服务端用户类型
+      let localUserType = res.data.data.userType;
+      //获取服务端用户uid
+      let localUid = res.data.data.uid;
+      let localNormalUserName = res.data.data.normalUserName;
       // 获取服务响应状态
       let localStatus = res.data.status;
       if (localStatus === false) {
@@ -96,8 +101,17 @@ export default {
         return this.$message.error("登录失败，请检查用户名和密码");
       } else {
         Cookie.set("token", localToken);
-        this.$message.success("登录成功");
-        await this.$router.push("/main");
+        Cookie.set("userType", localUserType);
+        Cookie.set("uid", localUid);
+        Cookie.set("normalUserName", localNormalUserName);
+        // 判断登录身份，跳转至不同的主页
+        if (requestBody.loginUserType === "user") {
+          this.$message.success("普通用户登录成功");
+          await this.$router.push("/user");
+        } else {
+          this.$message.success("管理员登录成功");
+          await this.$router.push("/admin");
+        }
       }
     },
 

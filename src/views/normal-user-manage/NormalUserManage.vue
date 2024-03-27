@@ -1,14 +1,13 @@
 <template>
-  <div>写日记</div>
+  <div>普通用户管理</div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {};
-  },
-};
+
+}
 </script>
 
 <style>
+
 </style>
