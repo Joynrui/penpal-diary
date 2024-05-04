@@ -6,7 +6,7 @@
         <div class="grid-content bg">
           <div
             class="diary-card"
-            v-for="diary in matchedUserDiaries"
+            v-for="diary in secretSpotDiaries"
             :key="diary.rid"
           >
             <div class="diary-card-content-layout">
@@ -22,8 +22,8 @@
                   type="success"
                   plain
                   @click="
+                    displayDiaryVisible = true;
                     displayDiary(diary.rid);
-                    diaryDialogVisible = true;
                   "
                   >查看</el-button
                 >
@@ -33,27 +33,66 @@
         </div>
       </el-col>
       <!-- 日记显示界面 -->
-      <el-col :span="12"> </el-col>
+      <el-col :span="12">
+        <div v-if="displayDiaryVisible">
+          <div class="diary">
+            <div class="title">{{ selectedDiary.title }}</div>
+            <hr />
+            <div class="content" v-html="selectedDiary.content"></div>
+          </div>
+        </div>
+      </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import Cookie from 'js-cookie';
+import axios from "axios";
+import Cookie from "js-cookie";
 export default {
   data() {
-    return {};
+    return {
+      // 树洞日记列表
+      secretSpotDiaries: [],
+      // 日记显示属性，默认为false
+      displayDiaryVisible: false,
+      // 当前选中日记
+      selectedDiary: null,
+    };
   },
   methods: {
     /**
      * 获取树洞日记
      */
     async getSecretSpotDiaries() {
-      
-    }
+      // 读取全部日记
+      const cookieUid = Cookie.get("uid");
+      let res = await axios.get("/api/diary/get-all-secret-spot-diary");
+      if (res.data.status) {
+        // 更新this.secretSpotDiaries
+        this.secretSpotDiaries = res.data.data.diary;
+        // 给secretSpotDiaries的每个diary对象添加一个属性
+        console.log(res.data.message);
+        console.log(this.secretSpotDiaries);
+        this.$message.success(res.data.message);
+      } else {
+        console.log(res.data.message);
+        this.$message.error(res.data.message);
+      }
+    },
+    /**
+     * 显示日记详情
+     */
+    displayDiary(rid) {
+      this.selectedDiary = this.secretSpotDiaries.find(
+        (diary) => diary.rid === rid
+      );
+      this.displayDiaryVisible = true; // 显示对话框
+    },
   },
-  mounted() {},
+  mounted() {
+    this.getSecretSpotDiaries();
+  },
 };
 </script>
 
@@ -109,6 +148,18 @@ export default {
     .lastModifiedTime {
       font-size: 14px;
     }
+  }
+}
+.diary {
+  .title {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold; /* 加粗 */
+    font-size: 20px; /* 字号加大 */
+  }
+  .content {
+    margin-top: 20px;
   }
 }
 </style>

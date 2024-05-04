@@ -7,7 +7,14 @@
         v-model="diaryTitle"
         placeholder="输入日记标题"
       />
+      <div class="secret-spot-radio">
+        <!-- 树洞日记状态选择 -->
+        <span>是否为树洞日记：</span>
+        <el-radio v-model="secretSpotDiary" label="1" >是</el-radio>
+        <el-radio v-model="secretSpotDiary" label="0" >否</el-radio>
+      </div>
       <div class="operate-button">
+        <div></div>
         <el-button @click="refreshPage">刷新</el-button>
         <!-- 如果diaryCode为1，则当前diary为编辑激活状态 -->
         <div v-if="this.$store.state.diaryEditActiveCode === true">
@@ -58,6 +65,8 @@ export default {
       // editorInstance: {},
       // 当前组件日记实例内容
       diaryContent: "",
+      // 当前日记树洞状态:整型, 0为否，1为是，默认为0
+      secretSpotDiary: "0",
     };
   },
 
@@ -86,6 +95,8 @@ export default {
         // 设置请求体中的content
         content: requestDiaryContent,
         // 其他日记实体参数
+        // 树洞日记状态
+        secretSpotDiary: this.secretSpotDiary,
       };
       console.log("requestBody:", requestBody);
       // 发送保存日记的请求
@@ -112,12 +123,15 @@ export default {
       const title = this.diaryTitle;
       // 获取日记内容
       const content = this.$refs.diaryEditor.editor.getContent();
+      // 获取树洞日记状态
+      const secretSpotDiary = this.secretSpotDiary;
       // 构建请求体对象
       const requestBody = {
         rid: rid,
         title: title,
         content: content,
-      }
+        secretSpotDiary: secretSpotDiary,
+      };
       // 发送更新日记的请求，使用axios
       const res = await axios.put("/api/diary/update-diary", requestBody);
       // 处理响应
@@ -125,7 +139,7 @@ export default {
         this.$router.push("/diary-list");
         console.log("更新成功");
         this.$message.success("更新成功");
-      } 
+      }
       if (res.data.status === false) {
         console.log("更新失败");
         this.$message.error("更新失败");
@@ -140,23 +154,30 @@ export default {
       // 如果diary对象不为空，则将diary内容填充到富文本编辑器中
       const diary = this.$store.state.diary;
       if (this.$store.state.diaryEditActiveCode === true) {
-        console.log("diaryEditActiveCode 为 true,当前store中diary为编辑状态日记");
+        console.log(
+          "diaryEditActiveCode 为 true,当前store中diary为编辑状态日记"
+        );
         console.log("被编辑日记为:", diary);
         // 获取编辑器实例
         if (this.$refs.diaryEditor.editor) {
           // 设置编辑器内容
           this.$refs.diaryEditor.editor.setContent(diary.content);
         }
+        // 设置日记标题
         this.diaryTitle = diary.title;
+        // 设置日记的树洞日记状态
+        this.secretSpotDiary = diary.secretSpotDiary;
       } else {
-        console.warn("diaryEditActiveCode 为 false,当前store中diary为非编辑状态日记");
+        console.log(
+          "diaryEditActiveCode 为 false,当前store中diary为非编辑状态日记"
+        );
       }
       // 在Promise链中执行函数，确保editor实例已经初始化
       return Promise.resolve();
     },
 
-        // const editorInstance = this.$refs.diaryEditor.editor;
-        // editorInstance.setContent(diary.content);
+    // const editorInstance = this.$refs.diaryEditor.editor;
+    // editorInstance.setContent(diary.content);
 
     /**
      * @deprecated 初始化tinymce编辑器
@@ -176,7 +197,7 @@ export default {
      * 刷新页面：清除store diary实体
      */
     refreshPage() {
-      // 
+      //
       if (this.$store.state.diaryEditActiveCode === 1) {
         console.log("store diary实体存在,置空diary");
         this.$store.commit("diaryEditActiveCode", {
@@ -209,14 +230,19 @@ export default {
 <style lang="less" scoped>
 .title-bar {
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
   align-items: center;
   padding: 10px;
   background-color: #f0f0f0;
+  .secret-spot-radio {
+    margin-left: 10px;
+    // display: flex;
+    // justify-content: space-between;
+  }
   .operate-button {
     display: flex;
     // margin-right: 40px;
-    margin-left: 10px;
+    // margin-left: 10px;
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <!--language: JavaScript-->
 <template>
-  <div class="login-container">
+  <div class="loginprehandle-container">
     <div class="head-title">
       <span>账户登录</span>
     </div>
@@ -11,14 +11,12 @@
         <el-radio-button label="user"></el-radio-button>
         <el-radio-button label="admin"></el-radio-button>
       </el-radio-group>
-
       <el-form-item label="用户名" prop="loginUserName">
         <el-input
           v-model="form.loginUserName"
           placeholder="请输入用户名"
         ></el-input>
       </el-form-item>
-
       <el-form-item label="密码" prop="loginUserPassword">
         <el-input
           type="password"
@@ -26,9 +24,8 @@
           placeholder="请输入密码"
         ></el-input>
       </el-form-item>
-
       <el-form-item class="submit">
-        <el-button type="primary" @click="login">登录</el-button>
+        <el-button type="primary" @click="loginPreHandle()">登录</el-button>
       </el-form-item>
 
       <el-form-item class="register">
@@ -69,18 +66,43 @@ export default {
   },
   methods: {
     /**
-     * async login() 是一个JavaScript方法，它使用了async关键字，表示该方法是一个异步函数。
-     * 异步函数允许在函数内部使用await关键字来等待异步操作的完成，而不会阻塞后续的代码执行。
-     * async login() 是用于处理用户登录操作的方法。它被标记为异步，因为通常用户
-     * 登录操作涉及到网络请求或其他可能需要一些时间来完成的异步操作，如发送HTTP请求并等待响应。
-     * 当你在一个异步函数中使用await关键字来等待某个异步操作的完成时，JavaScript会在等待的同时
-     * 允许其他代码继续执行，这可以提高应用的响应性。在你的情况下，async login() 方法用于发送
-     * 登录请求到后端API，并等待响应。当响应返回后，你可以在try块中处理成功的情况，或者在catch块
-     * 中处理可能出现的错误情况。这样，你的应用可以在等待登录请求完成时继续响应用户的操作，而不会
-     * 阻塞整个应用。
+     * 登录预处理
+     */
+    async loginPreHandle() {
+      // 如果登录类型为user,则在登录前检查当前用户是否已经封禁
+      if (this.form.loginUserType == "user") {
+        console.log("用户类型为：", this.form.loginUserType);
+        const checkRes = await axios.get(
+          "/api/user/select-normal-user-by-user-name",
+          {
+            params: {
+              normalUserName: this.form.loginUserName,
+            },
+          }
+        );
+        if (checkRes.data.status) {
+          if (checkRes.data.data.normalUser.isBanned == "y") {
+            this.$message.warning("该账户已封禁，无法登录，请联系管理员");
+          }
+          if (checkRes.data.data.normalUser.isBanned == "n") {
+            //执行登录
+            this.login();
+          }
+        }
+        if (!checkRes.data.status) {
+          this.$message.error("用户名不存在，请检查");
+          console.log("用户名不存在，请检查");
+        }
+      }
+      if (this.form.loginUserType == "admin") {
+        console.log("用户类型为：", this.form.loginUserType);
+        this.login();
+      }
+    },
+    /**
+     * 登录
      */
     async login() {
-      // 将用户类型和表单数据合并为一个对象
       let requestBody = {
         loginUserType: this.form.loginUserType,
         loginUserName: this.form.loginUserName,
@@ -93,7 +115,13 @@ export default {
       let localUserType = res.data.data.userType;
       //获取服务端用户uid
       let localUid = res.data.data.uid;
-      let localNormalUserName = res.data.data.normalUserName;
+      let localUserName;
+      if (localUserType == "user") {
+        localUserName = res.data.data.normalUserName;
+      }
+      if (localUserType == "admin") {
+        localUserName = res.data.data.adminUserName;
+      }
       // 获取服务响应状态
       let localStatus = res.data.status;
       if (localStatus === false) {
@@ -103,7 +131,12 @@ export default {
         Cookie.set("token", localToken);
         Cookie.set("userType", localUserType);
         Cookie.set("uid", localUid);
-        Cookie.set("normalUserName", localNormalUserName);
+        if (localUserType == "user") {
+          Cookie.set("normalUserName", localUserName);
+        }
+        if (localUserType == "admin") {
+          Cookie.set("adminUserName", localUserName);
+        }
         // 判断登录身份，跳转至不同的主页
         if (requestBody.loginUserType === "user") {
           this.$message.success("普通用户登录成功");
@@ -123,10 +156,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.login-container {
+.loginprehandle-container {
   width: 350px;
   border: 1px solid #eee;
-  // set login container in the center of the page
+  // set loginprehandle container in the center of the page
   margin: 10% auto;
   padding: 30px 30px;
   border-radius: 10px;
