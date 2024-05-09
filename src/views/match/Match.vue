@@ -68,17 +68,31 @@
         <el-button
           @click="
             showTargetedMatchRequestTargetNormalUserDialog = false;
-            denyTargetedMatchRequest;
+            denyTargetedMatchRequest();
           "
           >拒绝</el-button
         >
         <el-button
           type="primary"
           @click="
-            this.showTargetedMatchRequestTargetNormalUserDialog = false;
-            agreeTargetedMatchRequest;
+            showTargetedMatchRequestTargetNormalUserDialog = false;
+            agreeTargetedMatchRequest();
           "
           >同意</el-button
+        >
+      </span>
+    </el-dialog>
+    <!-- 定向匹配请求被拒对话框 -->
+    <el-dialog :visible.sync="showTargetedMatchRequestDenyDialog" title="提示">
+      <span>您的定向匹配请求已被拒绝</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button
+          type="primary"
+          @click="
+            showTargetedMatchRequestDenyDialog = false;
+            confirmDenyRequest();
+          "
+          >确认</el-button
         >
       </span>
     </el-dialog>
@@ -105,6 +119,8 @@ export default {
       targetedMatchingRequestNormalUserName: "",
       // interval: null,
       matchNormalUserName: "",
+      // 定向匹配请求被拒弹窗
+      showTargetedMatchRequestDenyDialog: false,
     };
   },
   methods: {
@@ -234,6 +250,11 @@ export default {
           this.matchingStatus = "targetedMatching";
         }
 
+        if (res.data.data.matchStatus === "TARGETED_MATCHING_HAS_BEEN_DENY") {
+          // 如果是定向匹配被拒状态，则显示被拒弹窗
+          this.showTargetedMatchRequestDenyDialog = true;
+        }
+
         if (res.data.data.matchStatus === "MATCHED") {
           console.log("当用户已匹配,无需执行检查");
           this.matchingStatus = "matched";
@@ -345,6 +366,7 @@ export default {
      * 同意定向匹配请求
      */
     async agreeTargetedMatchRequest() {
+      console.log("开始执行定向匹配同意程序...");
       // 同意定向匹配请求
       // 已知定向匹配请求用户名
       let requestBody = {
@@ -357,7 +379,6 @@ export default {
         "/api/user/agree-targeted-match-request",
         requestBody
       );
-      console.log();
       if (agreeRes.data.status) {
         // 设置前端匹配显示状态
         this.matchingStatus = "matched";
@@ -372,6 +393,7 @@ export default {
           }
         );
         if (matchRes.data.status) {
+          console.log("开始执行前端数据操作...");
           Cookie.set("matchedNormalUserUid", matchRes.data.data.normalUser.uid);
           // 获取匹配用户的用户名，将被匹配的用户名存入Cookie
           Cookie.set(
@@ -399,11 +421,45 @@ export default {
      * 拒绝定向匹配请求
      */
     async denyTargetedMatchRequest() {
+      console.log("开始执行拒绝定向匹配程序...");
       // 已知定向匹配用户的用户名
       // 向请求用户响应拒绝信息
-      // 当前用户的匹配状态不变，将请求用户的的匹配状态设置为已经被拒状态
-      // 定向请求结束，删除请求
+      // let requestBody = {
+      //   normalUserName: this.targetedMatchingRequestNormalUserName,
+      // };
+      const responseDenyInfoRes = await axios.get(
+        "/api/user/deny-targeted-match-request",
+        {
+          params:{
+            normalUserName:this.targetedMatchingRequestNormalUserName,
+          }
+        }
+      );
 
+      if (responseDenyInfoRes.data.status) {
+        console.log("已拒绝定向匹配请求");
+        this.$message.success("已拒绝定向匹配请求");
+      }
+      if (!responseDenyInfoRes.data.status) {
+        console.log("拒绝定向匹配请求失败");
+        this.$message.error("已拒绝定向匹配请求失败");
+      }
+    },
+    /**
+     * 确认被拒请求
+     */
+    async confirmDenyRequest() {
+      // 重新将当前用户匹配状态设置为未匹配
+      const setRes = await axios.get("/api/user/set-match-status-as-not-matched", {
+        params: {
+          normalUserName: Cookie.get("normalUserName"),
+        },
+      });
+      if (setRes.data.status) {
+        console.log("未匹配状态设置成功");
+      } else {
+        console.log("未匹配状态设置失败");
+      }
     },
   },
   mounted() {

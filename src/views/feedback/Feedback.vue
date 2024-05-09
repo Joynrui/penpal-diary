@@ -25,29 +25,18 @@ export default {
       if (this.newMessage.trim() === "") {
         return;
       }
-
-      // Assuming you have a method to send messages to the other user
       this.sendToOtherUser(this.newMessage);
-
-      // Add the sent message to the local messages array
       this.messages.push({
         content: this.newMessage,
         sentByMe: true
       });
-
-      // Clear the input field
       this.newMessage = "";
-
-      // Scroll to the bottom of the message container
       this.scrollToBottom();
     },
     sendToOtherUser(message) {
-      // Replace this with the logic to send the message to the other user
-      // For demonstration purposes, we'll just log the message
       console.log("Sending message to other user:", message);
     },
     scrollToBottom() {
-      // Scroll to the bottom of the message container
       this.$refs.messageContainer.scrollTop = this.$refs.messageContainer.scrollHeight;
     }
   }

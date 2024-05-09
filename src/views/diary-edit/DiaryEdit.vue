@@ -10,8 +10,8 @@
       <div class="secret-spot-radio">
         <!-- 树洞日记状态选择 -->
         <span>是否为树洞日记：</span>
-        <el-radio v-model="secretSpotDiary" label="1" >是</el-radio>
-        <el-radio v-model="secretSpotDiary" label="0" >否</el-radio>
+        <el-radio v-model="secretSpotDiary" label="1">是</el-radio>
+        <el-radio v-model="secretSpotDiary" label="0">否</el-radio>
       </div>
       <div class="operate-button">
         <div></div>
@@ -94,7 +94,6 @@ export default {
         title: this.diaryTitle,
         // 设置请求体中的content
         content: requestDiaryContent,
-        // 其他日记实体参数
         // 树洞日记状态
         secretSpotDiary: this.secretSpotDiary,
       };

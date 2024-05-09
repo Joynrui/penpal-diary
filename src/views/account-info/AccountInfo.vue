@@ -22,7 +22,6 @@
           >上传头像</el-button
         >
       </el-card>
-
       <!-- card2: 个人信息card -->
       <el-card class="box-card">
         <div class="text-line">

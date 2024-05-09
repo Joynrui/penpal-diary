@@ -39,6 +39,7 @@ const routes = [
     {
         path: "/admin",
         component: AdminUserLayout,
+        redirect: "/normal-user-manage",
         children: [
             { path: "/admin-account-info", component: AdminAccountInfo },
             { path: "/feedback-handle", component: FeedbackHandle },

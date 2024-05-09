@@ -64,7 +64,6 @@ export default {
       // 跳转之前先检查本地是否有有效token
       // 如果没有有效token，则跳转到登录页面
       // 如果有有效token，则跳转到用户首页
-
       if (Cookie.get("token") == null) {
         this.$message.error("没有令牌，请先登录");
         console.log("本地没有token,请登录");
@@ -73,7 +72,6 @@ export default {
       } else {
         this.$message.success("本地有令牌,无需登录");
         console.log("本地有token");
-
         // token有效则跳转到用户首页，无效则跳转到登录页面
         const localToken = Cookie.get("token");
         console.log("本地token获取成功,token为: " + localToken);
@@ -85,7 +83,6 @@ export default {
           this.$router.push("/login");
           return;
         }
-
         Cookie.set("userType", res.data.data.userType);
         // token有效, 读取cookie用户类型，若为管理员则跳转到管理员首页,否则跳转到普通用户首页
         let userType = Cookie.get("userType");
